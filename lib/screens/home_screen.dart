@@ -5,6 +5,8 @@ import '../widgets/task_list.dart';
 import '../widgets/pomodoro_timer.dart';
 import '../widgets/add_task_dialog.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import '../widgets/calendar_view.dart';
+import '../widgets/stopwatch_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,11 +37,14 @@ class _HomeScreenState extends State<HomeScreen> {
         index: _selectedIndex,
         children: const [
           TaskList(),
+          CalendarView(),
+          StopwatchView(),
           PomodoroTimer(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
+        type: BottomNavigationBarType.fixed,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
@@ -51,7 +56,15 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Görevler',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Takvim',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.timer),
+            label: 'Kronometre',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.av_timer),
             label: 'Pomodoro',
           ),
         ],

@@ -65,7 +65,7 @@ class TaskList extends StatelessWidget {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(task.description),
+                          Text(task.description ?? ''),
                           const SizedBox(height: 4),
                           LinearProgressIndicator(
                             value: task.progressPercentage,
@@ -80,25 +80,12 @@ class TaskList extends StatelessWidget {
                           ),
                         ],
                       ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            task.isCompleted
-                                ? Icons.check_circle
-                                : Icons.check_circle_outline,
-                            color:
-                                task.isCompleted ? Colors.green : Colors.grey,
-                          ),
-                          const SizedBox(width: 8),
-                          if (task.taskType != TaskType.other)
-                            IconButton(
-                              icon: const Icon(Icons.add),
-                              onPressed: () =>
-                                  _showProgressDialog(context, task),
-                            ),
-                        ],
+                      leading: Icon(
+                        task.isCompleted
+                            ? Icons.check_box
+                            : Icons.check_box_outline_blank,
                       ),
+                      onTap: () => taskController.toggleTaskStatus(task),
                     ),
                     if (task.deadline != null)
                       Padding(

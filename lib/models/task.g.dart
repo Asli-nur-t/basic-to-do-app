@@ -84,22 +84,6 @@ class TaskTypeAdapter extends TypeAdapter<TaskType> {
   final int typeId = 0;
 
   @override
-  TaskType read(BinaryReader reader) {
-    switch (reader.readByte()) {
-      case 0:
-        return TaskType.study;
-      case 1:
-        return TaskType.reading;
-      case 2:
-        return TaskType.exercise;
-      case 3:
-        return TaskType.other;
-      default:
-        return TaskType.study;
-    }
-  }
-
-  @override
   void write(BinaryWriter writer, TaskType obj) {
     switch (obj) {
       case TaskType.study:
@@ -111,9 +95,30 @@ class TaskTypeAdapter extends TypeAdapter<TaskType> {
       case TaskType.exercise:
         writer.writeByte(2);
         break;
-      case TaskType.other:
+      case TaskType.work:
         writer.writeByte(3);
         break;
+      case TaskType.other:
+        writer.writeByte(4);
+        break;
+    }
+  }
+
+  @override
+  TaskType read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return TaskType.study;
+      case 1:
+        return TaskType.reading;
+      case 2:
+        return TaskType.exercise;
+      case 3:
+        return TaskType.work;
+      case 4:
+        return TaskType.other;
+      default:
+        return TaskType.study;
     }
   }
 

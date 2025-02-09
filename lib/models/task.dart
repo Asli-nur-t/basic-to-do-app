@@ -11,6 +11,8 @@ enum TaskType {
   @HiveField(2)
   exercise,
   @HiveField(3)
+  work,
+  @HiveField(4)
   other
 }
 
@@ -23,7 +25,7 @@ class Task extends HiveObject {
   String title;
 
   @HiveField(2)
-  String description;
+  String? description;
 
   @HiveField(3)
   DateTime deadline;
@@ -58,10 +60,13 @@ class Task extends HiveObject {
   @HiveField(13)
   int? completedMinutes;
 
+  @HiveField(14)
+  DateTime? dueDate;
+
   Task({
     required this.id,
     required this.title,
-    required this.description,
+    this.description,
     required this.deadline,
     required this.taskType,
     this.isCompleted = false,
@@ -73,6 +78,7 @@ class Task extends HiveObject {
     this.completedPages = 0,
     this.completedQuestions = 0,
     this.completedMinutes = 0,
+    this.dueDate,
   });
 
   double get progressPercentage {

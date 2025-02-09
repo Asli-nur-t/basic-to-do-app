@@ -4,7 +4,8 @@ import '../models/task.dart';
 
 class TaskController extends GetxController {
   final _box = Hive.box<Task>('tasks');
-  final tasks = <Task>[].obs;
+  final _tasks = <Task>[].obs;
+  List<Task> get tasks => _tasks;
 
   @override
   void onInit() {
@@ -60,8 +61,16 @@ class TaskController extends GetxController {
     }
   }
 
+  void toggleTaskStatus(Task task) {
+    final index = _tasks.indexWhere((t) => t.id == task.id);
+    if (index != -1) {
+      _tasks[index].isCompleted = !_tasks[index].isCompleted;
+      update();
+    }
+  }
+
   void loadTasks() {
-    tasks.assignAll(_box.values.toList());
+    _tasks.assignAll(_box.values.toList());
     update();
   }
 }
