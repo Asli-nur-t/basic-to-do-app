@@ -10,10 +10,7 @@ class PomodoroSettingsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadSettings();
-  }
-
-  void loadSettings() {
+    // Kaydedilmiş değerleri yükle
     workDuration.value = _settingsBox.get('workDuration', defaultValue: 25);
     shortBreakDuration.value =
         _settingsBox.get('shortBreakDuration', defaultValue: 5);
@@ -21,16 +18,18 @@ class PomodoroSettingsController extends GetxController {
         _settingsBox.get('longBreakDuration', defaultValue: 15);
   }
 
-  void saveSettings() {
-    _settingsBox.put('workDuration', workDuration.value);
-    _settingsBox.put('shortBreakDuration', shortBreakDuration.value);
-    _settingsBox.put('longBreakDuration', longBreakDuration.value);
-  }
-
   void updateSettings({int? work, int? shortBreak, int? longBreak}) {
-    if (work != null) workDuration.value = work;
-    if (shortBreak != null) shortBreakDuration.value = shortBreak;
-    if (longBreak != null) longBreakDuration.value = longBreak;
-    saveSettings();
+    if (work != null) {
+      workDuration.value = work;
+      _settingsBox.put('workDuration', work);
+    }
+    if (shortBreak != null) {
+      shortBreakDuration.value = shortBreak;
+      _settingsBox.put('shortBreakDuration', shortBreak);
+    }
+    if (longBreak != null) {
+      longBreakDuration.value = longBreak;
+      _settingsBox.put('longBreakDuration', longBreak);
+    }
   }
 }

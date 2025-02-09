@@ -4,6 +4,7 @@ import '../controllers/theme_controller.dart';
 import '../widgets/task_list.dart';
 import '../widgets/pomodoro_timer.dart';
 import '../widgets/add_task_dialog.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
