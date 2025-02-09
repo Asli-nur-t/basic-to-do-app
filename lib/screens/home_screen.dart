@@ -23,11 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           GetBuilder<ThemeController>(
             builder: (controller) => IconButton(
-              icon: Icon(
-                controller.themeMode == ThemeMode.light
-                    ? Icons.dark_mode
-                    : Icons.light_mode,
-              ),
+              icon: Icon(controller.themeIcon),
+              tooltip: controller.themeText,
               onPressed: () => controller.toggleTheme(),
             ),
           ),

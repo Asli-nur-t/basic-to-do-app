@@ -3,27 +3,31 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class ThemeController extends GetxController {
-  final _box = Hive.box('settings');
-  var _themeMode = ThemeMode.light;
-
-  ThemeMode get themeMode => _themeMode;
+  final _settingsBox = Hive.box('settings');
+  final _isDarkMode = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _loadTheme();
+    _loadThemeMode();
+  }
+
+  void _loadThemeMode() {
+    _isDarkMode.value = _settingsBox.get('isDarkMode', defaultValue: false);
+    Get.changeThemeMode(_isDarkMode.value ? ThemeMode.dark : ThemeMode.light);
   }
 
   void toggleTheme() {
-    _themeMode =
-        _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-    _box.put('isDarkMode', _themeMode == ThemeMode.dark);
-    update();
+    _isDarkMode.value = !_isDarkMode.value;
+    _settingsBox.put('isDarkMode', _isDarkMode.value);
+    Get.changeThemeMode(_isDarkMode.value ? ThemeMode.dark : ThemeMode.light);
   }
 
-  void _loadTheme() {
-    final isDarkMode = _box.get('isDarkMode', defaultValue: false);
-    _themeMode = isDarkMode ? ThemeMode.dark : ThemeMode.light;
-    update();
-  }
+  bool get isDarkMode => _isDarkMode.value;
+  ThemeMode get themeMode =>
+      _isDarkMode.value ? ThemeMode.dark : ThemeMode.light;
+
+  IconData get themeIcon =>
+      _isDarkMode.value ? Icons.light_mode : Icons.dark_mode;
+  String get themeText => _isDarkMode.value ? 'Aydınlık Mod' : 'Karanlık Mod';
 }
