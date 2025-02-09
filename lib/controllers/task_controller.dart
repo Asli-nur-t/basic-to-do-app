@@ -10,33 +10,58 @@ class TaskController extends GetxController {
   void onInit() {
     super.onInit();
     loadTasks();
+    // Box'taki değişiklikleri dinle
+    _box.listenable().addListener(() {
+      loadTasks();
+    });
   }
 
   void addTask(Task task) {
-    tasks.add(task);
     _box.add(task);
+    loadTasks(); // Listeyi yenile
   }
 
   void removeTask(String id) {
-    tasks.removeWhere((task) => task.id == id);
     final index = _box.values.toList().indexWhere((task) => task.id == id);
     if (index != -1) {
       _box.deleteAt(index);
+      loadTasks(); // Listeyi yenile
     }
   }
 
   void toggleTaskCompletion(String id) {
-    final task = tasks.firstWhere((task) => task.id == id);
-    task.isCompleted = !task.isCompleted;
-    final index = _box.values.toList().indexWhere((t) => t.id == id);
+    final index = _box.values.toList().indexWhere((task) => task.id == id);
     if (index != -1) {
+      final task = _box.values.toList()[index];
+      task.isCompleted = !task.isCompleted;
       _box.putAt(index, task);
+      loadTasks(); // Listeyi yenile
     }
-    update();
+  }
+
+  void updateProgress(String id, {int? pages, int? questions, int? minutes}) {
+    final index = _box.values.toList().indexWhere((task) => task.id == id);
+    if (index != -1) {
+      final task = _box.values.toList()[index];
+
+      // Eğer görev tipi "other" ise ilerleme güncellemeyi atla
+      if (task.taskType != TaskType.other) {
+        if (pages != null) task.completedPages = pages;
+        if (questions != null) task.completedQuestions = questions;
+        if (minutes != null) task.completedMinutes = minutes;
+
+        if (task.progressPercentage >= 1.0) {
+          task.isCompleted = true;
+        }
+      }
+
+      _box.putAt(index, task);
+      loadTasks();
+    }
   }
 
   void loadTasks() {
-    final taskList = _box.values.toList();
-    tasks.assignAll(taskList);
+    tasks.assignAll(_box.values.toList());
+    update();
   }
 }

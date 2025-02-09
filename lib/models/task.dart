@@ -49,6 +49,15 @@ class Task extends HiveObject {
   @HiveField(10)
   DateTime? endTime;
 
+  @HiveField(11)
+  int? completedPages;
+
+  @HiveField(12)
+  int? completedQuestions;
+
+  @HiveField(13)
+  int? completedMinutes;
+
   Task({
     required this.id,
     required this.title,
@@ -61,7 +70,29 @@ class Task extends HiveObject {
     this.targetMinutes,
     this.startTime,
     this.endTime,
+    this.completedPages = 0,
+    this.completedQuestions = 0,
+    this.completedMinutes = 0,
   });
+
+  double get progressPercentage {
+    switch (taskType) {
+      case TaskType.reading:
+        return targetPages != null && targetPages! > 0
+            ? (completedPages ?? 0) / targetPages!
+            : 0;
+      case TaskType.study:
+        return targetQuestions != null && targetQuestions! > 0
+            ? (completedQuestions ?? 0) / targetQuestions!
+            : 0;
+      case TaskType.exercise:
+        return targetMinutes != null && targetMinutes! > 0
+            ? (completedMinutes ?? 0) / targetMinutes!
+            : 0;
+      default:
+        return 0;
+    }
+  }
 
   Map<String, dynamic> toJson() {
     return {
