@@ -15,12 +15,8 @@ class _PomodoroTimerState extends State<PomodoroTimer>
     with WidgetsBindingObserver {
   final settings = Get.put(PomodoroSettingsController());
 
-  static const workDuration = 25 * 60;
-  static const breakDuration = 5 * 60;
-  static const longBreakDuration = 15 * 60;
-
   Timer? _timer;
-  int _secondsLeft = workDuration;
+  int _secondsLeft = 0;
   bool _isRunning = false;
   bool _isBreak = false;
   int _pomodoroCount = 0;
@@ -60,8 +56,7 @@ class _PomodoroTimerState extends State<PomodoroTimer>
   Future<void> _loadTimerState() async {
     final box = Hive.box('settings');
     setState(() {
-      _secondsLeft = box.get('secondsLeft',
-          defaultValue: settings.workDuration.value * 60);
+      _secondsLeft = box.get('secondsLeft', defaultValue: 0);
       _isRunning = box.get('isRunning', defaultValue: false);
       _isBreak = box.get('isBreak', defaultValue: false);
       _pomodoroCount = box.get('pomodoroCount', defaultValue: 0);
@@ -83,24 +78,16 @@ class _PomodoroTimerState extends State<PomodoroTimer>
           _pomodoroCount++;
 
           if (_isBreak) {
-            _secondsLeft = workDuration;
+            _secondsLeft = settings.workDuration.value * 60;
             _isBreak = false;
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Mola Bitti! Çalışmaya devam et')),
-            );
+            _showNotification('Mola Bitti!', 'Çalışmaya devam et');
           } else {
             if (_pomodoroCount % 4 == 0) {
-              _secondsLeft = longBreakDuration;
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text('Uzun Mola Zamanı! 15 dakika mola ver')),
-              );
+              _secondsLeft = settings.longBreakDuration.value * 60;
+              _showNotification('Uzun Mola Zamanı!', '15 dakika mola ver');
             } else {
-              _secondsLeft = breakDuration;
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text('Pomodoro Tamamlandı! 5 dakika mola ver')),
-              );
+              _secondsLeft = settings.shortBreakDuration.value * 60;
+              _showNotification('Pomodoro Tamamlandı!', '5 dakika mola ver');
             }
             _isBreak = true;
           }
@@ -123,7 +110,7 @@ class _PomodoroTimerState extends State<PomodoroTimer>
   void _resetTimer() {
     _timer?.cancel();
     setState(() {
-      _secondsLeft = settings.workDuration.value * 60;
+      _secondsLeft = 0;
       _isRunning = false;
       _isBreak = false;
       _pomodoroCount = 0;
@@ -134,6 +121,17 @@ class _PomodoroTimerState extends State<PomodoroTimer>
     final minutes = (_secondsLeft / 60).floor();
     final seconds = _secondsLeft % 60;
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  void _showNotification(String title, String body) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$title\n$body'),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   @override
