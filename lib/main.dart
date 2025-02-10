@@ -7,6 +7,7 @@ import 'controllers/task_controller.dart';
 import 'models/task.dart';
 import 'screens/home_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,8 +67,46 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Todo Pomodoro',
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+        textTheme: GoogleFonts.bubblegumSansTextTheme(
+          Theme.of(context).textTheme,
+        ).copyWith(
+          // Başlıklar için özel stil
+          headlineLarge: GoogleFonts.bubblegumSans(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+          // Alt başlıklar için özel stil
+          titleMedium: GoogleFonts.bubblegumSans(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        appBarTheme: AppBarTheme(
+          titleTextStyle: GoogleFonts.bubblegumSans(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+      ),
+      darkTheme: ThemeData.dark().copyWith(
+        textTheme: GoogleFonts.bubblegumSansTextTheme(
+          Theme.of(context).textTheme,
+        ).apply(
+          bodyColor: Colors.white,
+          displayColor: Colors.white,
+        ),
+        appBarTheme: AppBarTheme(
+          titleTextStyle: GoogleFonts.bubblegumSans(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+      ),
       themeMode: Get.find<ThemeController>().themeMode,
       home: const HomeScreen(),
     );
