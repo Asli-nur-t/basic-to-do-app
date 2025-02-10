@@ -68,36 +68,48 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Todo Pomodoro',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.purple,
+          primary: const Color.fromARGB(255, 142, 114, 191),
+          secondary: const Color.fromARGB(255, 55, 0, 75),
+          tertiary: Colors.deepPurple,
+        ),
         useMaterial3: true,
-        textTheme: GoogleFonts.bubblegumSansTextTheme(
-          Theme.of(context).textTheme,
-        ).copyWith(
-          // Başlıklar için özel stil
-          headlineLarge: GoogleFonts.bubblegumSans(
+        textTheme: TextTheme(
+          displayLarge: GoogleFonts.bubblegumSans(
             fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
-          // Alt başlıklar için özel stil
-          titleMedium: GoogleFonts.bubblegumSans(
-            fontSize: 18,
+          bodyLarge: GoogleFonts.bubblegumSans(),
+          bodyMedium: GoogleFonts.bubblegumSans(),
+          titleLarge: GoogleFonts.bubblegumSans(
+            fontSize: 20,
             fontWeight: FontWeight.w500,
           ),
         ),
         appBarTheme: AppBarTheme(
+          backgroundColor: Colors.purple.shade50,
           titleTextStyle: GoogleFonts.bubblegumSans(
             fontSize: 22,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: Colors.purple.shade900,
           ),
         ),
       ),
       darkTheme: ThemeData.dark().copyWith(
-        textTheme: GoogleFonts.bubblegumSansTextTheme(
-          Theme.of(context).textTheme,
-        ).apply(
-          bodyColor: Colors.white,
-          displayColor: Colors.white,
+        textTheme: TextTheme(
+          displayLarge: GoogleFonts.bubblegumSans(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+          bodyLarge: GoogleFonts.bubblegumSans(color: Colors.white),
+          bodyMedium: GoogleFonts.bubblegumSans(color: Colors.white),
+          titleLarge: GoogleFonts.bubblegumSans(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
         ),
         appBarTheme: AppBarTheme(
           titleTextStyle: GoogleFonts.bubblegumSans(
