@@ -10,6 +10,7 @@ import '../widgets/stopwatch_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'account_screen.dart';
 import 'settings_screen.dart';
+import '../controllers/font_controller.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -96,15 +97,21 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       appBar: AppBar(
         title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: Image.asset(
                 'assets/images/todo-logom.png',
-                height: 46,
+                height: 32,
               ),
             ),
-            const Text('Todo Pomodoro'),
+            Flexible(
+              child: Text(
+                'Todo Pomodoro',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         actions: [
@@ -165,6 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showFontSelectionDialog() {
+    final FontController fontController = Get.find();
     Get.dialog(
       AlertDialog(
         title: const Text('Yazı Tipi Seç'),
@@ -176,8 +184,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 'BubblegumSans',
                 style: GoogleFonts.bubblegumSans(),
               ),
+              trailing: fontController.currentFontName == 'BubblegumSans'
+                  ? const Icon(Icons.check, color: Colors.green)
+                  : null,
               onTap: () {
-                // Font değiştirme işlemi
+                fontController.setFont(0);
                 Get.back();
               },
             ),
@@ -186,8 +197,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 'ComicNeue',
                 style: GoogleFonts.comicNeue(),
               ),
+              trailing: fontController.currentFontName == 'ComicNeue'
+                  ? const Icon(Icons.check, color: Colors.green)
+                  : null,
               onTap: () {
-                // Font değiştirme işlemi
+                fontController.setFont(1);
                 Get.back();
               },
             ),
@@ -196,8 +210,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Comfortaa',
                 style: GoogleFonts.comfortaa(),
               ),
+              trailing: fontController.currentFontName == 'Comfortaa'
+                  ? const Icon(Icons.check, color: Colors.green)
+                  : null,
               onTap: () {
-                // Font değiştirme işlemi
+                fontController.setFont(2);
                 Get.back();
               },
             ),
