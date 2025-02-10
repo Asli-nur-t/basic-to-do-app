@@ -22,7 +22,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Todo Pomodoro'),
+        title: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Image.asset(
+                'assets/images/todo-logom.png',
+                height: 46,
+              ),
+            ),
+            const Text('Todo Pomodoro'),
+          ],
+        ),
         actions: [
           GetBuilder<ThemeController>(
             builder: (controller) => IconButton(
