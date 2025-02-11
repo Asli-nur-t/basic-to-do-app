@@ -216,22 +216,23 @@ class PomodoroTimer extends StatelessWidget {
                 'Uzun Mola Süresi',
               ),
             ),
-            SwitchListTile(
-              title: const Text('Otomatik Mola Başlat'),
-              value: controller.autoStartBreaks.value,
-              onChanged: (value) =>
-                  controller.updateSettings(autoStartBreak: value),
-            ),
-            SwitchListTile(
-              title: const Text('Otomatik Çalışma Başlat'),
-              value: controller.autoStartPomodoros.value,
-              onChanged: (value) => controller.updateSettings(autoStart: value),
-            ),
-            SwitchListTile(
-              title: const Text('Ses'),
-              value: controller.soundEnabled.value,
-              onChanged: (value) => controller.updateSettings(sound: value),
-            ),
+            Obx(() => SwitchListTile(
+                  title: const Text('Otomatik Mola Başlat'),
+                  value: controller.autoStartBreaks.value,
+                  onChanged: (value) =>
+                      controller.updateSettings(autoStartBreak: value),
+                )),
+            Obx(() => SwitchListTile(
+                  title: const Text('Otomatik Çalışma Başlat'),
+                  value: controller.autoStartPomodoros.value,
+                  onChanged: (value) =>
+                      controller.updateSettings(autoStart: value),
+                )),
+            Obx(() => SwitchListTile(
+                  title: const Text('Ses'),
+                  value: controller.soundEnabled.value,
+                  onChanged: (value) => controller.updateSettings(sound: value),
+                )),
           ],
         ),
         actions: [
