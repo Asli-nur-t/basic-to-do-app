@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'dart:async';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:just_audio/just_audio.dart';
 
 class PomodoroSettingsController extends GetxController {
   final _settingsBox = Hive.box('settings');
@@ -26,6 +29,9 @@ class PomodoroSettingsController extends GetxController {
   final remainingSeconds = 0.obs;
   Timer? _timer;
 
+  // Ses oynatıcı
+  late final AudioPlayer _audioPlayer;
+
   // Getter'lar
   int get breakDuration =>
       isBreak.value ? shortBreakDuration.value : workDuration.value;
@@ -34,9 +40,11 @@ class PomodoroSettingsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _audioPlayer = AudioPlayer();
     _loadSettings();
     _loadStatistics();
     reset();
+    _initAudio();
   }
 
   void start() {
@@ -70,13 +78,44 @@ class PomodoroSettingsController extends GetxController {
       updateStatistics();
       isBreak.value = true;
       remainingSeconds.value = shortBreakDuration.value * 60;
-      if (autoStartBreaks.value) start();
+
+      // Bildirim gönder
+      _showNotification(
+        'Pomodoro Tamamlandı!',
+        'Tebrikler! Şimdi ${shortBreakDuration.value} dakikalık mola zamanı.',
+      );
+
+      // Ses çal
+      _playSound();
+
+      // Otomatik mola başlatma
+      if (autoStartBreaks.value) {
+        Future.delayed(const Duration(seconds: 1), () {
+          start();
+        });
+      }
     } else {
       // Mola bitti
       isBreak.value = false;
       remainingSeconds.value = workDuration.value * 60;
-      if (autoStartPomodoros.value) start();
+
+      // Bildirim gönder
+      _showNotification(
+        'Mola Bitti!',
+        'Yeni bir pomodoro başlatmaya hazır mısın?',
+      );
+
+      // Ses çal
+      _playSound();
+
+      // Otomatik çalışma başlatma
+      if (autoStartPomodoros.value) {
+        Future.delayed(const Duration(seconds: 1), () {
+          start();
+        });
+      }
     }
+    update();
   }
 
   void skip() {
@@ -92,6 +131,7 @@ class PomodoroSettingsController extends GetxController {
 
   @override
   void onClose() {
+    _audioPlayer.dispose();
     _timer?.cancel();
     super.onClose();
   }
@@ -139,10 +179,16 @@ class PomodoroSettingsController extends GetxController {
   }) {
     if (work != null) {
       workDuration.value = work;
+      if (!isBreak.value && !isRunning.value) {
+        remainingSeconds.value = work * 60;
+      }
       _settingsBox.put('workDuration', work);
     }
     if (shortBreak != null) {
       shortBreakDuration.value = shortBreak;
+      if (isBreak.value && !isRunning.value) {
+        remainingSeconds.value = shortBreak * 60;
+      }
       _settingsBox.put('shortBreakDuration', shortBreak);
     }
     if (longBreak != null) {
@@ -169,6 +215,7 @@ class PomodoroSettingsController extends GetxController {
       weeklyPomodoroTarget.value = weeklyTarget;
       _settingsBox.put('weeklyPomodoroTarget', weeklyTarget);
     }
+    update();
   }
 
   void _loadStatistics() {
@@ -178,5 +225,52 @@ class PomodoroSettingsController extends GetxController {
         _settingsBox.get('weeklyCompletedPomodoros', defaultValue: 0);
     final lastDate = _settingsBox.get('lastPomodoroDate');
     lastPomodoroDate.value = lastDate != null ? DateTime.parse(lastDate) : null;
+  }
+
+  // Bildirim gösterme metodu
+  void _showNotification(String title, String body) async {
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'pomodoro_channel',
+      'Pomodoro Bildirimleri',
+      channelDescription: 'Pomodoro zamanlayıcı bildirimleri',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false,
+    );
+
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      title,
+      body,
+      platformChannelSpecifics,
+    );
+  }
+
+  // Ses dosyalarını yükle
+  void _initAudio() async {
+    try {
+      await _audioPlayer.setAsset('assets/sounds/notification.wav');
+    } catch (e) {
+      debugPrint('Ses dosyası yüklenirken hata: $e');
+    }
+  }
+
+  // Ses çalma metodu
+  void _playSound() async {
+    if (soundEnabled.value) {
+      try {
+        await _audioPlayer.seek(Duration.zero);
+        await _audioPlayer.play();
+      } catch (e) {
+        debugPrint('Ses çalma hatası: $e');
+      }
+    }
   }
 }
