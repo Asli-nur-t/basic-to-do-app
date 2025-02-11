@@ -7,6 +7,24 @@ class TaskController extends GetxController {
   final _tasks = <Task>[].obs;
   List<Task> get tasks => _tasks;
 
+  // Filtreleme için
+  final selectedCategory = 'Tümü'.obs;
+  final selectedPriority = 0.obs; // 0: Tümü, 1: Düşük, 2: Orta, 3: Yüksek
+
+  // Kategorileri yönet
+  final categories = <String>['Tümü', 'Genel', 'Okul', 'İş', 'Kişisel'].obs;
+
+  // Filtrelenmiş görevleri getir
+  List<Task> get filteredTasks {
+    return _tasks.where((task) {
+      bool categoryMatch = selectedCategory.value == 'Tümü' ||
+          task.category == selectedCategory.value;
+      bool priorityMatch = selectedPriority.value == 0 ||
+          task.priority == selectedPriority.value;
+      return categoryMatch && priorityMatch;
+    }).toList();
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -72,5 +90,43 @@ class TaskController extends GetxController {
   void loadTasks() {
     _tasks.assignAll(_box.values.toList());
     update();
+  }
+
+  // Görevi güncelle
+  void updateTask(
+    String id, {
+    String? title,
+    String? description,
+    DateTime? deadline,
+    TaskType? taskType,
+    int? priority,
+    String? category,
+    int? dailyTarget,
+    int? weeklyTarget,
+  }) {
+    final index = _tasks.indexWhere((task) => task.id == id);
+    if (index != -1) {
+      final task = _tasks[index];
+      if (title != null) task.title = title;
+      if (description != null) task.description = description;
+      if (deadline != null) task.deadline = deadline;
+      if (taskType != null) task.taskType = taskType;
+      if (priority != null) task.priority = priority;
+      if (category != null) task.category = category;
+      if (dailyTarget != null) task.dailyTarget = dailyTarget;
+      if (weeklyTarget != null) task.weeklyTarget = weeklyTarget;
+      task.lastUpdated = DateTime.now();
+
+      _box.put(task.id, task);
+      update();
+    }
+  }
+
+  // Yeni kategori ekle
+  void addCategory(String category) {
+    if (!categories.contains(category)) {
+      categories.add(category);
+      update();
+    }
   }
 }
