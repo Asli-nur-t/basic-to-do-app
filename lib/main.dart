@@ -9,6 +9,8 @@ import 'screens/home_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'controllers/font_controller.dart';
+import 'controllers/streak_controller.dart';
+import 'controllers/pomodoro_settings_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,6 +60,8 @@ void main() async {
   Get.put(ThemeController(), permanent: true);
   Get.put(TaskController(), permanent: true);
   Get.put(FontController(), permanent: true);
+  Get.put(StreakController(), permanent: true);
+  Get.put(PomodoroSettingsController(), permanent: true);
 
   runApp(const MyApp());
 }

@@ -33,6 +33,7 @@ flutter:
   
   assets:
     - assets/images/todo-logom.png
+    - assets/icons/icons8-fire.gif
 
 flutter_launcher_icons:
   android: true

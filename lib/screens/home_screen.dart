@@ -11,6 +11,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'account_screen.dart';
 import 'settings_screen.dart';
 import '../controllers/font_controller.dart';
+import '../widgets/streak_indicator.dart';
+import '../widgets/draggable_streak_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -106,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 32,
               ),
             ),
-            Flexible(
+            const Flexible(
               child: Text(
                 'Todo Pomodoro',
                 overflow: TextOverflow.ellipsis,
@@ -124,13 +126,25 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: const [
-          TaskList(),
-          CalendarView(),
-          StopwatchView(),
-          PomodoroTimer(),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          IndexedStack(
+            index: _selectedIndex,
+            children: const [
+              TaskList(),
+              CalendarView(),
+              StopwatchView(),
+              PomodoroTimer(),
+            ],
+          ),
+          const Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: EdgeInsets.only(left: 20, bottom: 100),
+              child: DraggableStreakIndicator(),
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

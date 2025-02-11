@@ -1,33 +1,99 @@
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'dart:async';
 
 class PomodoroSettingsController extends GetxController {
   final _settingsBox = Hive.box('settings');
+
+  // Temel ayarlar
   final workDuration = 25.obs;
   final shortBreakDuration = 5.obs;
   final longBreakDuration = 15.obs;
   final autoStartBreaks = false.obs;
   final autoStartPomodoros = false.obs;
   final soundEnabled = true.obs;
+
+  // Hedefler ve istatistikler
   final dailyPomodoroTarget = 8.obs;
   final weeklyPomodoroTarget = 40.obs;
-
-  // Pomodoro istatistikleri
   final dailyCompletedPomodoros = 0.obs;
   final weeklyCompletedPomodoros = 0.obs;
   final lastPomodoroDate = Rx<DateTime?>(null);
+
+  // Timer değişkenleri
+  final isRunning = false.obs;
+  final isBreak = false.obs;
+  final remainingSeconds = 0.obs;
+  Timer? _timer;
+
+  // Getter'lar
+  int get breakDuration =>
+      isBreak.value ? shortBreakDuration.value : workDuration.value;
+  double get progress => remainingSeconds.value / (workDuration.value * 60);
 
   @override
   void onInit() {
     super.onInit();
     _loadSettings();
     _loadStatistics();
-    // Her gün gece yarısı istatistikleri sıfırla
-    _setupDailyReset();
+    reset();
   }
 
-  void _setupDailyReset() {
-    // Günlük istatistikleri sıfırlama mantığı
+  void start() {
+    if (!isRunning.value) {
+      isRunning.value = true;
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (remainingSeconds.value > 0) {
+          remainingSeconds.value--;
+        } else {
+          _onPeriodComplete();
+        }
+      });
+    }
+  }
+
+  void pause() {
+    _timer?.cancel();
+    isRunning.value = false;
+  }
+
+  void reset() {
+    pause();
+    isBreak.value = false;
+    remainingSeconds.value = workDuration.value * 60;
+  }
+
+  void _onPeriodComplete() {
+    pause();
+    if (!isBreak.value) {
+      // Çalışma periyodu bitti
+      updateStatistics();
+      isBreak.value = true;
+      remainingSeconds.value = shortBreakDuration.value * 60;
+      if (autoStartBreaks.value) start();
+    } else {
+      // Mola bitti
+      isBreak.value = false;
+      remainingSeconds.value = workDuration.value * 60;
+      if (autoStartPomodoros.value) start();
+    }
+  }
+
+  void skip() {
+    pause();
+    if (isBreak.value) {
+      isBreak.value = false;
+      remainingSeconds.value = workDuration.value * 60;
+    } else {
+      isBreak.value = true;
+      remainingSeconds.value = shortBreakDuration.value * 60;
+    }
+  }
+
+  @override
+  void onClose() {
+    _timer?.cancel();
+    super.onClose();
   }
 
   void updateStatistics() {
