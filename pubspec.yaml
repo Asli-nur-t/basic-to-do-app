@@ -1,5 +1,5 @@
-name: todo_app
-description: A Todo app with Pomodoro timer
+name: hyperfocus
+description: HyperFocus - Pomodoro tekniği ile çalışma zamanınızı yönetin, görevlerinizi planlayın ve alışkanlıklarınızı takip edin. Odaklanmış çalışma için tasarlanmış, minimalist ve kullanıcı dostu bir uygulama.
 publish_to: 'none'
 
 version: 1.0.0+1
