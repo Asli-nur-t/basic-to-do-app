@@ -1,5 +1,5 @@
-name: todo_app
-description: A Todo app with Pomodoro timer
+name: hyperfocus
+description: HyperFocus - Pomodoro tekniği ile çalışma zamanınızı yönetin, görevlerinizi planlayın ve alışkanlıklarınızı takip edin. Odaklanmış çalışma için tasarlanmış, minimalist ve kullanıcı dostu bir uygulama.
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -19,6 +19,7 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   table_calendar: ^3.0.9
   google_fonts: ^6.1.0
+  just_audio: ^0.9.36
 
 dev_dependencies:
   flutter_test:
@@ -33,6 +34,8 @@ flutter:
   
   assets:
     - assets/images/todo-logom.png
+    - assets/icons/icons8-fire.gif
+    - assets/sounds/notification.wav
 
 flutter_launcher_icons:
   android: true

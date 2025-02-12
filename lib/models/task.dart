@@ -63,6 +63,21 @@ class Task extends HiveObject {
   @HiveField(14)
   DateTime? dueDate;
 
+  @HiveField(15)
+  int priority;
+
+  @HiveField(16)
+  String category;
+
+  @HiveField(17)
+  int? dailyTarget;
+
+  @HiveField(18)
+  int? weeklyTarget;
+
+  @HiveField(19)
+  DateTime? lastUpdated;
+
   Task({
     required this.id,
     required this.title,
@@ -79,6 +94,11 @@ class Task extends HiveObject {
     this.completedQuestions = 0,
     this.completedMinutes = 0,
     this.dueDate,
+    this.priority = 2,
+    this.category = 'Genel',
+    this.dailyTarget,
+    this.weeklyTarget,
+    this.lastUpdated,
   });
 
   double get progressPercentage {

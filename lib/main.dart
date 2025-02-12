@@ -8,6 +8,9 @@ import 'models/task.dart';
 import 'screens/home_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'controllers/font_controller.dart';
+import 'controllers/streak_controller.dart';
+import 'controllers/pomodoro_settings_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,6 +59,9 @@ void main() async {
   // Controller'ları başlat
   Get.put(ThemeController(), permanent: true);
   Get.put(TaskController(), permanent: true);
+  Get.put(FontController(), permanent: true);
+  Get.put(StreakController(), permanent: true);
+  Get.put(PomodoroSettingsController(), permanent: true);
 
   runApp(const MyApp());
 }
@@ -65,50 +71,64 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Todo Pomodoro',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-        textTheme: GoogleFonts.bubblegumSansTextTheme(
-          Theme.of(context).textTheme,
-        ).copyWith(
-          // Başlıklar için özel stil
-          headlineLarge: GoogleFonts.bubblegumSans(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+    return GetBuilder<FontController>(
+      builder: (fontController) => GetMaterialApp(
+        title: 'Todo Pomodoro',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.purple,
+            primary: const Color.fromARGB(255, 142, 114, 191),
+            secondary: const Color.fromARGB(255, 55, 0, 75),
+            tertiary: Colors.deepPurple,
           ),
-          // Alt başlıklar için özel stil
-          titleMedium: GoogleFonts.bubblegumSans(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
+          useMaterial3: true,
+          textTheme: TextTheme(
+            displayLarge: fontController.getFontStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+            bodyLarge: fontController.getFontStyle(),
+            bodyMedium: fontController.getFontStyle(),
+            titleLarge: fontController.getFontStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          appBarTheme: AppBarTheme(
+            backgroundColor: Colors.purple.shade50,
+            titleTextStyle: fontController.getFontStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
+              color: Colors.purple.shade900,
+            ),
           ),
         ),
-        appBarTheme: AppBarTheme(
-          titleTextStyle: GoogleFonts.bubblegumSans(
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
+        darkTheme: ThemeData.dark().copyWith(
+          textTheme: TextTheme(
+            displayLarge: fontController.getFontStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            bodyLarge: fontController.getFontStyle(color: Colors.white),
+            bodyMedium: fontController.getFontStyle(color: Colors.white),
+            titleLarge: fontController.getFontStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
+          appBarTheme: AppBarTheme(
+            titleTextStyle: fontController.getFontStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
         ),
+        themeMode: Get.find<ThemeController>().themeMode,
+        home: const HomeScreen(),
       ),
-      darkTheme: ThemeData.dark().copyWith(
-        textTheme: GoogleFonts.bubblegumSansTextTheme(
-          Theme.of(context).textTheme,
-        ).apply(
-          bodyColor: Colors.white,
-          displayColor: Colors.white,
-        ),
-        appBarTheme: AppBarTheme(
-          titleTextStyle: GoogleFonts.bubblegumSans(
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-      ),
-      themeMode: Get.find<ThemeController>().themeMode,
-      home: const HomeScreen(),
     );
   }
 }

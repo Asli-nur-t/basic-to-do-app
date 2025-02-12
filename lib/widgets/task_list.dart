@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/task_controller.dart';
 import '../models/task.dart';
+import './task_details_dialog.dart';
 
 class TaskList extends StatelessWidget {
   const TaskList({super.key});
@@ -85,7 +86,9 @@ class TaskList extends StatelessWidget {
                             ? Icons.check_box
                             : Icons.check_box_outline_blank,
                       ),
-                      onTap: () => taskController.toggleTaskStatus(task),
+                      onTap: () {
+                        Get.dialog(TaskDetailsDialog(task: task));
+                      },
                     ),
                     if (task.deadline != null)
                       Padding(
@@ -102,6 +105,7 @@ class TaskList extends StatelessWidget {
                           ],
                         ),
                       ),
+                    _buildTargetProgress(task),
                   ],
                 ),
               ),
@@ -185,5 +189,27 @@ class TaskList extends StatelessWidget {
       default:
         return '';
     }
+  }
+
+  Widget _buildTargetProgress(Task task) {
+    if (task.dailyTarget == null && task.weeklyTarget == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (task.dailyTarget != null)
+          Text(
+            'Günlük Hedef: ${task.completedPages ?? task.completedQuestions ?? task.completedMinutes ?? 0}/${task.dailyTarget}',
+            style: const TextStyle(fontSize: 12),
+          ),
+        if (task.weeklyTarget != null)
+          Text(
+            'Haftalık Hedef: ${task.completedPages ?? task.completedQuestions ?? task.completedMinutes ?? 0}/${task.weeklyTarget}',
+            style: const TextStyle(fontSize: 12),
+          ),
+      ],
+    );
   }
 }
